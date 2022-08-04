@@ -20,19 +20,29 @@ export default function ClubCard(props) {
         }
     }
 
-
-
     console.log(props)
 
     return (
         <div className="card">
             <img src={props.club.team.logos[0].href} alt="" className="card--image"/>
-            <h3 className="card--name">{props.club.team.name}</h3>
-            <h3 className="card--season">{props.club.seasonDisplay}</h3>
 
-            {props.isFirst && <h3 className="card--position">{positionTxt}</h3>}
+            <div className="card--data">
+                <p className="card--name">{props.club.team.name}</p>
+                <p className="card--season">{props.club.seasonDisplay}</p>                
+            </div>
 
-
+            {
+                props.isFirst ?
+                <h2 className="card--position">{positionTxt}</h2> :
+                <div className="card--buttons">
+                    <div className="buttons--lower">
+                        <h2>Lower</h2>
+                    </div>
+                    <div className="buttons--higher">
+                        <h2>Higher</h2>
+                    </div>                    
+                </div>
+            }
         </div>
     )
 }
