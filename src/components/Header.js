@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 import PhilJones from "../images/phil-jones.jpg"
 
 export default function Header() {

@@ -1,4 +1,5 @@
-import React from "react";
+import React from "react"
+import ClubCard from "./ClubCard"
 
 export default function Game() {
 
@@ -28,7 +29,7 @@ export default function Game() {
     // }, [allSeasonsAvailable])
 
     React.useEffect(() => {
-        function generateSeason() {
+        function generateSeason() {            
             const ri = Math.floor(Math.random() * allSeasonsAvailable.length)
             const s = allSeasonsAvailable[ri]
             return s            
@@ -77,26 +78,36 @@ export default function Game() {
             const res = await fetch("https://api-football-standings.azharimm.site/leagues/eng.1/seasons")
             const data = await res.json()            
 
-            const seasons = data.data.seasons.map(seasonItem => seasonItem.year)
+            let seasons = data.data.seasons.map(seasonItem => seasonItem.year)
+            let max = Math.max(...seasons)
+            seasons = seasons.filter(season => season !== max)
             setAllSeasonsAvailable(seasons)
         }
 
         getAllSeasonsAvailable()        
     }, [])
 
-    console.log(firstClub)
-    console.log(secondClub)
+    //console.log(firstClub)
+    //console.log(secondClub)
 
-       
+
+    const showClubCards = firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0     
 
 
     return (
         <main>
+            {
+                showClubCards &&
+                <div className="game--clubCards">
+                    <ClubCard club={firstClub} isFirst={true}/>
+                    <ClubCard club={secondClub} isFirst={false}/>
+                </div>
+            }
+
             <div className="game--scores">
                 <h2 className="game--highscore">High Score: {highScore}</h2>
                 <h2 className="game--score">Score: {score}</h2>
-            </div>
-            
+            </div>           
         </main>
     )   
 }
