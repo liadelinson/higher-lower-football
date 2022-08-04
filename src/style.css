@@ -30,3 +30,18 @@ body {
     font-size: 0.75rem;
     font-weight: 500;
 }
+
+.game--scores {
+    display: flex;
+    align-items: center;
+    height: 80px;
+    padding: 20px;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+.game--highscore {    
+    margin-right: auto;
+}
+

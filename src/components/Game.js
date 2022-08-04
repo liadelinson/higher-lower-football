@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 
 export default function Game() {
 
@@ -45,22 +45,22 @@ export default function Game() {
             const data = await res.json()
 
             const club = data.data.standings[clubIndex]
+            const seasonDisplay = data.data.seasonDisplay
 
-            //console.log(club)
+            const clubObject = {
+                ...club,
+                season: season,
+                seasonDisplay: seasonDisplay,
+                position: clubIndex + 1
+            }            
 
+            //console.log(clubObject)            
+            
             if(clubToSet === 1) {
-                setFirstClub({
-                    ...club,
-                    season: season,
-                    position: clubIndex + 1
-                })
+                setFirstClub(clubObject)
             }
             else if(clubToSet === 2) {
-                setSecondClub({
-                    ...club,
-                    season: season,
-                    position: clubIndex + 1
-                })
+                setSecondClub(clubObject)
             }           
         }
 
@@ -92,6 +92,10 @@ export default function Game() {
 
     return (
         <main>
+            <div className="game--scores">
+                <h2 className="game--highscore">High Score: {highScore}</h2>
+                <h2 className="game--score">Score: {score}</h2>
+            </div>
             
         </main>
     )   
