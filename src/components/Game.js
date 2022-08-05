@@ -79,8 +79,24 @@ export default function Game() {
             const data = await res.json()            
 
             let seasons = data.data.seasons.map(seasonItem => seasonItem.year)
-            let max = Math.max(...seasons)
-            seasons = seasons.filter(season => season !== max)
+
+            //filtering seasons array so all seasons should be complete
+
+            const currentTime = new Date()
+            const year = currentTime.getFullYear()
+            const month = currentTime.getMonth() + 1
+
+            if(month <= 6)
+            {
+                //the most recent complete season is year-2/year-1
+                seasons = seasons.filter(season => season < year - 1)
+            }
+            else
+            {
+                //the most recent complete season is year-1/year
+                seasons = seasons.filter(season => season < year)
+            }            
+            
             setAllSeasonsAvailable(seasons)
         }
 
