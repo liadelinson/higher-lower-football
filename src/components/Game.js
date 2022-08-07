@@ -13,65 +13,55 @@ export default function Game() {
 
     const [secondClub, setSecondClub] = React.useState({})
 
-    // const getRandomClub = React.useCallback(() => {
-    //     const randomSeasonIndex = Math.floor(Math.random() * allSeasonsAvailable.length)
-    //     const season = allSeasonsAvailable[randomSeasonIndex]
-    //     const url = `https://api-football-standings.azharimm.site/leagues/eng.1/standings?season=${season}`
 
-    //     async function findClub() {
-    //         const res = await fetch(url)
-    //         const data = await res.json()            
+    const generateSeason = React.useCallback(() => {
+        const ri = Math.floor(Math.random() * allSeasonsAvailable.length)
+        const s = allSeasonsAvailable[ri]
+        return s 
+    }, [allSeasonsAvailable])
 
-    //         console.log(data)           
-    //     }
+    const generateClubIndex = React.useCallback(() => {
+        const idx = Math.floor(Math.random() * 20)
+        return idx
+    }, [])
 
-    //     findClub()
-    // }, [allSeasonsAvailable])
+    const getRandomClub = React.useCallback(async () => {
+        const season = generateSeason()
+        const clubIndex = generateClubIndex()
+
+        const url = `https://api-football-standings.azharimm.site/leagues/eng.1/standings?season=${season}&sort=asc`
+        const res = await fetch(url)
+        const data = await res.json()
+
+        const club = data.data.standings[clubIndex]
+        const seasonDisplay = data.data.seasonDisplay
+
+        const clubObject = {
+            ...club,
+            season: season,
+            seasonDisplay: seasonDisplay,
+            position: clubIndex + 1
+        }       
+
+        return await clubObject
+
+    }, [generateSeason, generateClubIndex])
+
+    const firstRandomClub = React.useCallback(async () => {
+        setFirstClub(await getRandomClub())
+    }, [getRandomClub])
+
+    const secondRandomClub = React.useCallback(async () => {
+        setSecondClub(await getRandomClub())
+    }, [getRandomClub])
 
     React.useEffect(() => {
-        function generateSeason() {            
-            const ri = Math.floor(Math.random() * allSeasonsAvailable.length)
-            const s = allSeasonsAvailable[ri]
-            return s            
-        }
-
-        function generateClubIndex() {
-            const idx = Math.floor(Math.random() * 20)
-            return idx
-        }
-
-        async function getRandomClub(season, clubIndex, clubToSet) {
-            const url = `https://api-football-standings.azharimm.site/leagues/eng.1/standings?season=${season}&sort=asc`
-            const res = await fetch(url)
-            const data = await res.json()
-
-            const club = data.data.standings[clubIndex]
-            const seasonDisplay = data.data.seasonDisplay
-
-            const clubObject = {
-                ...club,
-                season: season,
-                seasonDisplay: seasonDisplay,
-                position: clubIndex + 1
-            }            
-
-            //console.log(clubObject)            
-            
-            if(clubToSet === 1) {
-                setFirstClub(clubObject)
-            }
-            else if(clubToSet === 2) {
-                setSecondClub(clubObject)
-            }           
-        }
-
         if(allSeasonsAvailable && allSeasonsAvailable.length) {
-            for(let i = 1; i <= 2; i++) {
-                getRandomClub(generateSeason(), generateClubIndex(), i)
-            }           
+            firstRandomClub()
+            secondRandomClub()                                 
         }      
 
-    }, [allSeasonsAvailable])
+    }, [allSeasonsAvailable, firstRandomClub, secondRandomClub])
 
     React.useEffect(() => {
         async function getAllSeasonsAvailable() {
@@ -137,12 +127,19 @@ export default function Game() {
                     setHighScore(prevHighScore => prevHighScore + 1)
                 }                
                 return prevScore + 1
-            })            
-            
+            })
+
+            setFirstClub(secondClub)
+            secondRandomClub()           
         }
         else 
         {
             //if the user is incorrect
+
+            setScore(0)
+
+            firstRandomClub()
+            secondRandomClub()
         }
     }
 
