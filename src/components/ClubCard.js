@@ -20,7 +20,7 @@ export default function ClubCard(props) {
         }
     }
 
-    console.log(props)
+    //console.log(props)
 
     return (
         <div className="card">
@@ -35,11 +35,19 @@ export default function ClubCard(props) {
                 props.isFirst ?
                 <h2 className="card--position">{positionTxt}</h2> :
                 <div className="card--buttons">
-                    <div className="buttons--lower">
-                        <h2>Lower</h2>
+                    <div
+                        className="buttons--lower"
+                        id="btnLower"
+                        onClick={props.handleChange}                        
+                    >
+                        Lower
                     </div>
-                    <div className="buttons--higher">
-                        <h2>Higher</h2>
+                    <div
+                        className="buttons--higher"
+                        id="btnHigher"
+                        onClick={props.handleChange}                        
+                    >                            
+                        Higher
                     </div>                    
                 </div>
             }

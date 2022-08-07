@@ -83,13 +83,16 @@ body {
 }
 
 .card--buttons > div {    
-    border: 1px solid;    
+    border: 1px solid;
+    height: 40px;    
     cursor: pointer;
-    vertical-align: middle;
+    display: flex;    
+    justify-content: center;    
+    align-items: center;
     width: 40%;
     border-radius: 60px;     
-    margin: 5px 10%;    
-    text-align: center;
+    margin: 5% 10%;    
+    font-weight: 700;    
 }
 
 .buttons--lower {

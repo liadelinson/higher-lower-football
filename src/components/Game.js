@@ -107,16 +107,52 @@ export default function Game() {
     //console.log(secondClub)
 
 
-    const showClubCards = firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0     
+    const showClubCards = firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0
+    
+    function handleChange(event) {
+        let isLowerBtn = true
+        const {id} = event.target        
+        if(id === "btnHigher")
+        {
+            isLowerBtn = false
+        }
 
+        let realSolution = 1
+        if(firstClub.position > secondClub.position) {
+            //second club got better position
+            realSolution = 2
+        }
+        else if(firstClub.position < secondClub.position) {
+            //second club got worse position
+            realSolution = 0
+        }
+        
+        if((isLowerBtn && realSolution <= 1) || (!isLowerBtn && realSolution >= 1))
+        {
+            //if the user is correct          
+
+            setScore((prevScore) => {
+                if(highScore === prevScore)
+                {
+                    setHighScore(prevHighScore => prevHighScore + 1)
+                }                
+                return prevScore + 1
+            })            
+            
+        }
+        else 
+        {
+            //if the user is incorrect
+        }
+    }
 
     return (
         <main>
             {
                 showClubCards &&
                 <div className="game--clubCards">
-                    <ClubCard club={firstClub} isFirst={true}/>
-                    <ClubCard club={secondClub} isFirst={false}/>
+                    <ClubCard club={firstClub} isFirst={true} handleChange={handleChange}/>
+                    <ClubCard club={secondClub} isFirst={false} handleChange={handleChange}/>
                 </div>
             }
 
