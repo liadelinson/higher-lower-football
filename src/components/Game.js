@@ -5,6 +5,8 @@ export default function Game() {
 
     const [allSeasonsAvailable, setAllSeasonsAvailable] = React.useState([])
 
+    const [allStandings, setAllStandings] = React.useState({})
+
     const [score, setScore] = React.useState(0)
 
     const [highScore, setHighScore] = React.useState(0)
@@ -25,16 +27,17 @@ export default function Game() {
         return idx
     }, [])
 
-    const getRandomClub = React.useCallback(async () => {
+    const getRandomClub = React.useCallback(() => {
         const season = generateSeason()
         const clubIndex = generateClubIndex()
+        
+        if(!allStandings || !Object.keys(allStandings).length)
+        {
+            return {}
+        }
 
-        const url = `https://api-football-standings.azharimm.site/leagues/eng.1/standings?season=${season}&sort=asc`
-        const res = await fetch(url)
-        const data = await res.json()
-
-        const club = data.data.standings[clubIndex]
-        const seasonDisplay = data.data.seasonDisplay
+        const club = allStandings[season].standings[clubIndex]
+        const seasonDisplay = allStandings[season].seasonDisplay
 
         const clubObject = {
             ...club,
@@ -43,25 +46,60 @@ export default function Game() {
             position: clubIndex + 1
         }       
 
-        return await clubObject
+        return clubObject
 
-    }, [generateSeason, generateClubIndex])
+    }, [allStandings, generateSeason, generateClubIndex])
 
-    const firstRandomClub = React.useCallback(async () => {
-        setFirstClub(await getRandomClub())
+    const getAllStandings = React.useCallback(async () => {
+        try {            
+            const urls = allSeasonsAvailable.map((season) =>
+                `https://api-football-standings.azharimm.site/leagues/eng.1/standings?season=${season}&sort=asc`)
+            
+            const requests = urls.map((url) => fetch(url))
+            const responses = await Promise.all(requests)
+            const errors = responses.filter((response) => !response.ok);
+
+            if (errors.length > 0) {
+                throw errors.map((response) => Error(response.statusText));
+            }
+
+            const json = responses.map((response) => response.json());
+            const data = await Promise.all(json);           
+
+            const allStandingsObject = data.reduce((obj, item) => ({...obj, [item.data.season]: item.data}), {})
+            
+            setAllStandings(allStandingsObject)
+        }
+        catch(errors) {
+            errors.forEach((error) => console.error(error));
+        }            
+    }, [allSeasonsAvailable])
+
+
+    const firstRandomClub = React.useCallback(() => {
+        setFirstClub(getRandomClub())
     }, [getRandomClub])
 
-    const secondRandomClub = React.useCallback(async () => {
-        setSecondClub(await getRandomClub())
+    const secondRandomClub = React.useCallback(() => {
+        setSecondClub(getRandomClub())
     }, [getRandomClub])
+
+
+    React.useEffect(() => {
+        if(allStandings && Object.keys(allStandings).length) {
+            firstRandomClub()
+            secondRandomClub()   
+        }
+
+    }, [allStandings, firstRandomClub, secondRandomClub])
+
 
     React.useEffect(() => {
         if(allSeasonsAvailable && allSeasonsAvailable.length) {
-            firstRandomClub()
-            secondRandomClub()                                 
+            getAllStandings()                                        
         }      
 
-    }, [allSeasonsAvailable, firstRandomClub, secondRandomClub])
+    }, [allSeasonsAvailable, getAllStandings])
 
     React.useEffect(() => {
         async function getAllSeasonsAvailable() {
