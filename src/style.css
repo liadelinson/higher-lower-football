@@ -106,6 +106,31 @@ body {
 
 }
 
+.game--gameOver {
+    
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;         
+}
+
+.button--playAgain {
+    background: linear-gradient(to right, #1dbb3a, #07fa14);
+    color: black;
+    border: 1px solid;
+    height: 40px;    
+    cursor: pointer;
+    display: flex;    
+    justify-content: center;    
+    align-items: center;
+    width: 20%;
+    border-radius: 60px;     
+    margin: 5% 10%;    
+    font-weight: 700; 
+
+}
+
 .game--scores {
     display: flex;
     align-items: center;
@@ -119,4 +144,6 @@ body {
 .game--highscore {    
     margin-right: auto;
 }
+
+
 

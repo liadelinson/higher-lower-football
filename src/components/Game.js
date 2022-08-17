@@ -15,6 +15,8 @@ export default function Game() {
 
     const [secondClub, setSecondClub] = React.useState({})
 
+    const [inGameMode, setInGameMode] = React.useState(0)
+
 
     const generateSeason = React.useCallback(() => {
         const ri = Math.floor(Math.random() * allSeasonsAvailable.length)
@@ -86,6 +88,14 @@ export default function Game() {
 
 
     React.useEffect(() => {
+        if(firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0) {
+            setInGameMode((prevInGameMode) => (!prevInGameMode ? 1 : prevInGameMode))
+        }    
+
+    }, [firstClub, secondClub])
+
+
+    React.useEffect(() => {
         if(allStandings && Object.keys(allStandings).length) {
             firstRandomClub()
             secondRandomClub()   
@@ -135,7 +145,7 @@ export default function Game() {
     //console.log(secondClub)
 
 
-    const showClubCards = firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0
+    //const showClubCards = firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0
     
     function handleChange(event) {
         let isLowerBtn = true
@@ -173,23 +183,71 @@ export default function Game() {
         else 
         {
             //if the user is incorrect
+            //here
 
-            setScore(0)
+            setInGameMode(2)
 
-            firstRandomClub()
-            secondRandomClub()
+            
         }
+    }
+
+    function handlePlayAgain(event) {
+        setScore(0)
+
+        console.log(score)
+
+        firstRandomClub()
+        secondRandomClub()
+
+        setInGameMode(1)
+    }
+
+    function gameOverClubDetails(club) {
+        let details = `${club.team.name}'s position in ${club.seasonDisplay}: ${club.position}`
+        details += `${club.position === 1 ? 'st' :
+                    club.position === 2 ? 'nd' :
+                    club.position === 3 ? 'rd' : 'th'}`
+        
+        return details
     }
 
     return (
         <main>
-            {
-                showClubCards &&
+            {              
+
+
+                (inGameMode === 1) &&
                 <div className="game--clubCards">
                     <ClubCard club={firstClub} isFirst={true} handleChange={handleChange}/>
                     <ClubCard club={secondClub} isFirst={false} handleChange={handleChange}/>
                 </div>
+
+                
+
             }
+            {
+                (inGameMode === 2) &&
+                <div className="game--gameOver">
+                    <h2>Game Over</h2>
+                    <h2>
+                        {gameOverClubDetails(firstClub)}
+                    </h2>
+                    <h2>
+                        {gameOverClubDetails(secondClub)}
+                    </h2>
+                    <h2>Score: {score}</h2>
+                    <div
+                        className="button--playAgain"
+                        id="btnPlayAgain"
+                        onClick={handlePlayAgain}
+                    >
+                        Play Again
+                    </div>
+                </div>
+
+            }
+           
+
 
             <div className="game--scores">
                 <h2 className="game--highscore">High Score: {highScore}</h2>
