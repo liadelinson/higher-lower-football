@@ -2,16 +2,22 @@
     box-sizing: border-box;
 }
 
-body {
+html, body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(to right, #FBCEB1, #E9967A);
-    margin: 0;
+    
+    margin: 0;    
+}
+
+.app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .header {
     display: flex;
     align-items: center;
-    height: 65px;
+    height: 8%;    
     background: linear-gradient(to right, #870000, #190a05);
     color: white;
     padding: 20px;
@@ -32,12 +38,28 @@ body {
     font-weight: 500;
 }
 
+.game {
+    flex: 1;
+    /*background: linear-gradient(to right, #FBCEB1, #E9967A); */
+    background: repeating-linear-gradient(
+    135deg,
+    #fab57a 0px,
+    #fab57a 20%,
+    #ffa87b 20%,
+    #ffa87b 40%
+  );
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
 .game--clubCards {
     display: flex;
     flex-direction: row;    
-    justify-content: center;
-    margin-top: 20px;
-    gap: 300px;
+    justify-content: center;     
+    gap: 300px;    
+    flex-wrap: wrap;
 }
 
 .card {   
@@ -106,16 +128,37 @@ body {
 
 }
 
-.game--gameOver {
-    
+.game--gameOver {       
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     flex-direction: column;
-    justify-content: center;
-    width: 100%;         
+    align-items: center;
+    align-content: center;    
+    justify-content: center;        
 }
 
-.button--playAgain {
+.gameOver--title {
+    font-size: 400%;
+    font-weight: 700;   
+    background: linear-gradient(to right, #870000, #190a05);
+    color: white;
+    padding: 1%;
+    border-radius: 10%; 
+    
+}
+
+.gameOver--score {
+    font-size: 200%;   
+    background-image: linear-gradient(0deg,#f7971e, #ffd200);
+    padding: 0.5%;
+    border-radius: 10%;    
+    
+
+    
+    
+}
+
+.gameOver--playAgain {
     background: linear-gradient(to right, #1dbb3a, #07fa14);
     color: black;
     border: 1px solid;
@@ -126,19 +169,25 @@ body {
     align-items: center;
     width: 20%;
     border-radius: 60px;     
-    margin: 5% 10%;    
-    font-weight: 700; 
+    margin: 3%;
+    font-weight: 700;
+}
 
+
+
+.game--gameOver > h4 {
+    margin-bottom: 0.25%;
+    font-weight: 400;
 }
 
 .game--scores {
     display: flex;
     align-items: center;
-    height: 80px;
+    height: 8%;
     padding: 20px;
     position: absolute;
     bottom: 0px;
-    width: 100%;
+    width: 100%;   
 }
 
 .game--highscore {    

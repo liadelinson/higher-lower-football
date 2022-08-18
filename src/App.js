@@ -4,7 +4,7 @@ import Game from "./components/Game"
 
 export default function App() {
   return (
-    <div>
+    <div className="app">
       <Header/>
       <Game/>
     </div>

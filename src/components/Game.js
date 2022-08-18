@@ -89,7 +89,7 @@ export default function Game() {
 
     React.useEffect(() => {
         if(firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0) {
-            setInGameMode((prevInGameMode) => (!prevInGameMode ? 1 : prevInGameMode))
+            setInGameMode((prevInGameMode) => ((prevInGameMode !== 1) ? 1 : prevInGameMode))
         }    
 
     }, [firstClub, secondClub])
@@ -183,23 +183,15 @@ export default function Game() {
         else 
         {
             //if the user is incorrect
-            //here
-
-            setInGameMode(2)
-
-            
+            setInGameMode(2)            
         }
     }
 
-    function handlePlayAgain(event) {
-        setScore(0)
-
-        console.log(score)
+    function handlePlayAgain() {
+        setScore(0)        
 
         firstRandomClub()
-        secondRandomClub()
-
-        setInGameMode(1)
+        secondRandomClub()       
     }
 
     function gameOverClubDetails(club) {
@@ -212,47 +204,39 @@ export default function Game() {
     }
 
     return (
-        <main>
-            {              
-
-
+        <main className="game">
+            {
                 (inGameMode === 1) &&
                 <div className="game--clubCards">
                     <ClubCard club={firstClub} isFirst={true} handleChange={handleChange}/>
                     <ClubCard club={secondClub} isFirst={false} handleChange={handleChange}/>
+                    <div className="game--scores">
+                        <h2 className="game--highscore">High Score: {highScore}</h2>
+                        <h2 className="game--score">Score: {score}</h2>
+                    </div>
                 </div>
-
-                
-
             }
             {
                 (inGameMode === 2) &&
                 <div className="game--gameOver">
-                    <h2>Game Over</h2>
-                    <h2>
-                        {gameOverClubDetails(firstClub)}
-                    </h2>
-                    <h2>
-                        {gameOverClubDetails(secondClub)}
-                    </h2>
-                    <h2>Score: {score}</h2>
+                    <h1 className="gameOver--title">Game Over</h1>                    
+                    <h2 className="gameOver--score">Score: {score}</h2>
                     <div
-                        className="button--playAgain"
+                        className="gameOver--playAgain"
                         id="btnPlayAgain"
                         onClick={handlePlayAgain}
                     >
                         Play Again
                     </div>
+                    <h4 className="gameOver--clubDetails">
+                        {gameOverClubDetails(firstClub)}
+                    </h4>
+                    <h4 className="gameOver--clubDetails">
+                        {gameOverClubDetails(secondClub)}
+                    </h4>
                 </div>
-
             }
-           
-
-
-            <div className="game--scores">
-                <h2 className="game--highscore">High Score: {highScore}</h2>
-                <h2 className="game--score">Score: {score}</h2>
-            </div>           
+                       
         </main>
     )   
 }
