@@ -55,7 +55,7 @@ export default function Game() {
     const getAllStandings = React.useCallback(async () => {
         try {            
             const urls = allSeasonsAvailable.map((season) =>
-                `https://api-football-standings.azharimm.site/leagues/eng.1/standings?season=${season}&sort=asc`)
+                `https://api-football-standings.azharimm.dev/leagues/eng.1/standings?season=${season}&sort=asc`)
             
             const requests = urls.map((url) => fetch(url))
             const responses = await Promise.all(requests)
@@ -113,7 +113,7 @@ export default function Game() {
 
     React.useEffect(() => {
         async function getAllSeasonsAvailable() {
-            const res = await fetch("https://api-football-standings.azharimm.site/leagues/eng.1/seasons")
+            const res = await fetch("https://api-football-standings.azharimm.dev/leagues/eng.1/seasons")
             const data = await res.json()            
 
             let seasons = data.data.seasons.map(seasonItem => seasonItem.year)
@@ -135,7 +135,8 @@ export default function Game() {
                 seasons = seasons.filter(season => season < year)
             }            
             
-            setAllSeasonsAvailable(seasons)
+            
+            setAllSeasonsAvailable(seasons)            
         }
 
         getAllSeasonsAvailable()        
