@@ -29,12 +29,12 @@ html, body {
 }
 
 .header--title {
-    font-size: 1.25rem;
+    font-size: calc(0.5em + 0.5vw);
     margin-right: auto;
 }
 
 .header--description {
-    font-size: 0.75rem;
+    font-size: calc(0.25em + 0.5vw);
     font-weight: 500;
 }
 
@@ -60,7 +60,8 @@ html, body {
     height: 8vh;
     padding: 2vh;   
     bottom: 0px;
-    width: 100%;   
+    width: 100%;
+    font-size: calc(0.25em + 0.75vw);   
 }
 
 .gameScores--highscore {    
@@ -69,17 +70,18 @@ html, body {
 
 .gameClubCards {
     margin-top: 2vh;
+    margin-bottom: 4vh;
     display: flex;
     flex-direction: row;    
     justify-content: center;     
-    gap: 25vw;    
-    flex-wrap: wrap;
-    height: 76vh;
+    column-gap: 20vw;        
+    flex-wrap: wrap;    
 }
 
 .card {   
-    font-size: calc(0.5em + 0.75vw);
-    width: 25vw;
+    font-size: calc(0.25em + 0.5vw);
+    max-width: max-content;
+    height: auto;
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;    
@@ -88,7 +90,8 @@ html, body {
 }
 
 .card--image {
-    max-height: 40vh;
+    max-width: 25vw;
+    max-height: 50vh;
     margin-bottom: 7px;
     border-radius: 7px;     
 }
@@ -129,7 +132,7 @@ html, body {
     border-radius: 6vw;     
     margin: 5% 10%;    
     font-weight: 700;
-    font-size: calc(0.5em + 0.5vw);   
+    font-size: calc(0.25em + 0.75vw);   
 }
 
 .buttons--lower {
@@ -152,18 +155,18 @@ html, body {
 }
 
 .gameOver--title {
-    font-size: 400%;
+    font-size: 12vmin;
     font-weight: 700;   
     background: linear-gradient(to right, #870000, #190a05);
     color: white;
-    padding: 1%;
+    padding: 1vmin;
     border-radius: 10%;     
 }
 
 .gameOver--score {
-    font-size: 200%;   
+    font-size: 6vmin;   
     background-image: linear-gradient(0deg,#f7971e, #ffd200);
-    padding: 0.5%;
+    padding: 0.5vmin;
     border-radius: 10%;      
 }
 
@@ -178,13 +181,14 @@ html, body {
     align-items: center;
     width: 20%;
     border-radius: 60px;     
-    margin: 3%;
+    margin: 3vmin;
     font-weight: 700;
+    font-size: 3vmin;
 }
 
 .game--gameOver > h4 {
-    margin-bottom: 0.25%;
-    font-size: calc(0.25em + 0.75vw);
+    margin-bottom: 0.25vh;
+    font-size: 0.5vmin;
     font-weight: 400;
 }
 
