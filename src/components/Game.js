@@ -1,13 +1,20 @@
 import React from "react"
+import GameMenu from "./GameMenu"
 import GameClubCards from "./GameClubCards"
 import GameScores from "./GameScores"
 import GameOver from "./GameOver"
 
 export default function Game() {
 
-    const [allSeasonsAvailable, setAllSeasonsAvailable] = React.useState([])
+    const [allLeagues, setAllLeagues] = React.useState([])
 
-    const [allStandings, setAllStandings] = React.useState({})
+    const [allSeasonsAvailablePerLeague, setAllSeasonsAvailablePerLeague] = React.useState({})
+
+    const [allStandingsPerLeague, setAllStandingsPerLeague] = React.useState({})
+
+    const [selectedLeague, setSelectedLeague] = React.useState("eng.1")
+
+    const [isRandomLeague, setIsRandomLeague] = React.useState(false)
 
     const [score, setScore] = React.useState(0)
 
@@ -20,28 +27,30 @@ export default function Game() {
     const [inGameMode, setInGameMode] = React.useState(0)
 
 
-    const generateSeason = React.useCallback(() => {
-        const ri = Math.floor(Math.random() * allSeasonsAvailable.length)
-        const s = allSeasonsAvailable[ri]
-        return s 
-    }, [allSeasonsAvailable])
 
-    const generateClubIndex = React.useCallback(() => {
-        const idx = Math.floor(Math.random() * 20)
+    const generateSeason = React.useCallback((leagueId) => {        
+        const ri = Math.floor(Math.random() * allSeasonsAvailablePerLeague[leagueId].length)
+        const s = allSeasonsAvailablePerLeague[leagueId][ri]        
+        return s 
+    }, [allSeasonsAvailablePerLeague])
+
+    const generateClubIndex = React.useCallback((numOfClubs) => {
+        const idx = Math.floor(Math.random() * numOfClubs)
         return idx
     }, [])
 
-    const getRandomClub = React.useCallback(() => {
-        const season = generateSeason()
-        const clubIndex = generateClubIndex()
+    const getRandomClub = React.useCallback((leagueId) => {      
         
-        if(!allStandings || !Object.keys(allStandings).length)
+        const season = generateSeason(leagueId)
+        const clubIndex = generateClubIndex(allStandingsPerLeague[leagueId][season].standings.length)
+        
+        if(!allStandingsPerLeague[leagueId] || !Object.keys(allStandingsPerLeague[leagueId]).length)
         {
             return {}
-        }
+        }        
 
-        const club = allStandings[season].standings[clubIndex]
-        const seasonDisplay = allStandings[season].seasonDisplay
+        const club = allStandingsPerLeague[leagueId][season].standings[clubIndex]
+        const seasonDisplay = allStandingsPerLeague[leagueId][season].seasonDisplay
 
         const clubObject = {
             ...club,
@@ -52,41 +61,50 @@ export default function Game() {
 
         return clubObject
 
-    }, [allStandings, generateSeason, generateClubIndex])
+    }, [allStandingsPerLeague, generateSeason, generateClubIndex])
+
+    
 
     const getAllStandings = React.useCallback(async () => {
-        try {            
-            const urls = allSeasonsAvailable.map((season) =>
-                `https://api-football-standings.azharimm.dev/leagues/eng.1/standings?season=${season}&sort=asc`)
-            
-            const requests = urls.map((url) => fetch(url))
-            const responses = await Promise.all(requests)
-            const errors = responses.filter((response) => !response.ok);
+        try {
 
-            if (errors.length > 0) {
-                throw errors.map((response) => Error(response.statusText));
-            }
+            let allStandingsPerLeagueObject = {}
 
-            const json = responses.map((response) => response.json());
-            const data = await Promise.all(json);           
+            for(const [leagueId, allSeasonsAvailable] of Object.entries(allSeasonsAvailablePerLeague))
+            {
+                const urls = allSeasonsAvailable.map((season) =>
+                `https://api-football-standings.azharimm.dev/leagues/${leagueId}/standings?season=${season}&sort=asc`)
 
-            const allStandingsObject = data.reduce((obj, item) => ({...obj, [item.data.season]: item.data}), {})
-            
-            setAllStandings(allStandingsObject)
+                const requests = urls.map((url) => fetch(url))
+                const responses = await Promise.all(requests)
+                const errors = responses.filter((response) => !response.ok)                
+
+                if (errors.length > 0) {
+                    throw errors.map((response) => Error(response.statusText))
+                }                
+
+                const json = responses.map((response) => response.json())
+                const data = await Promise.all(json)           
+
+                const allStandingsObject = data.reduce((obj, item) => ({...obj, [item.data.season]: item.data}), {})
+
+                allStandingsPerLeagueObject = {...allStandingsPerLeagueObject, [leagueId]: allStandingsObject}
+            }         
+            setAllStandingsPerLeague(allStandingsPerLeagueObject)
         }
         catch(errors) {
             errors.forEach((error) => console.error(error));
         }            
-    }, [allSeasonsAvailable])
+    }, [allSeasonsAvailablePerLeague])
 
 
-    const firstRandomClub = React.useCallback(() => {
-        setFirstClub(getRandomClub())
-    }, [getRandomClub])
+    const firstRandomClub = React.useCallback(() => {        
+        setFirstClub(getRandomClub(selectedLeague))
+    }, [selectedLeague, getRandomClub])
 
     const secondRandomClub = React.useCallback(() => {
-        setSecondClub(getRandomClub())
-    }, [getRandomClub])
+        setSecondClub(getRandomClub(selectedLeague))
+    }, [selectedLeague, getRandomClub])
 
 
     React.useEffect(() => {
@@ -98,57 +116,83 @@ export default function Game() {
 
 
     React.useEffect(() => {
-        if(allStandings && Object.keys(allStandings).length) {
+        if(allStandingsPerLeague && Object.keys(allStandingsPerLeague).length) {
             firstRandomClub()
             secondRandomClub()   
         }
 
-    }, [allStandings, firstRandomClub, secondRandomClub])
+    }, [allStandingsPerLeague, firstRandomClub, secondRandomClub])
 
 
     React.useEffect(() => {
-        if(allSeasonsAvailable && allSeasonsAvailable.length) {
+        if(allSeasonsAvailablePerLeague && Object.keys(allSeasonsAvailablePerLeague).length) {
             getAllStandings()                                        
         }      
 
-    }, [allSeasonsAvailable, getAllStandings])
+    }, [allSeasonsAvailablePerLeague, getAllStandings])
 
     React.useEffect(() => {
-        async function getAllSeasonsAvailable() {
-            const res = await fetch("https://api-football-standings.azharimm.dev/leagues/eng.1/seasons")
-            const data = await res.json()            
+        async function getAllSeasonsAvailablePerLeague() {
 
-            let seasons = data.data.seasons.map(seasonItem => seasonItem.year)
-
-            //filtering seasons array so all seasons should be complete
-
-            const currentTime = new Date()
-            const year = currentTime.getFullYear()
-            const month = currentTime.getMonth() + 1
-
-            if(month <= 6)
-            {
-                //the most recent complete season is year-2/year-1
-                seasons = seasons.filter(season => season < year - 1)
-            }
-            else
-            {
-                //the most recent complete season is year-1/year
-                seasons = seasons.filter(season => season < year)
-            }            
+            let allSeasons = {}
             
+            for(const league of allLeagues)
+            {
+                const res = await fetch(`https://api-football-standings.azharimm.dev/leagues/${league.id}/seasons`)
+                const data = await res.json()            
+
+                let seasons = data.data.seasons.map(seasonItem => seasonItem.year)
+
+                //filtering seasons array so all seasons should be complete
+
+                const currentTime = new Date()
+                const year = currentTime.getFullYear()
+                const month = currentTime.getMonth() + 1
+
+                if(month <= 6)
+                {
+                    //the most recent complete season is year-2/year-1
+                    seasons = seasons.filter(season => season < year - 1)
+                }
+                else
+                {
+                    //the most recent complete season is year-1/year
+                    seasons = seasons.filter(season => season < year)
+                }
+
+                // fix for French league    
+                if(league.id === "fra.1")
+                {                    
+                    const badSeasons = [2000, 2001]
+                    seasons = seasons.filter(season => !badSeasons.includes(season))
+                }
+
+                allSeasons = {...allSeasons, [league.id]: seasons}
+            }           
+            setAllSeasonsAvailablePerLeague(allSeasons)            
+        }
+        getAllSeasonsAvailablePerLeague()
+             
+    }, [allLeagues])
+
+    React.useEffect(() => {
+        async function getAllLeagues() {
+            const res = await fetch("https://api-football-standings.azharimm.dev/leagues")
+            const data = await res.json()
+
+            const relevantLeaguesIds = ["eng.1", "esp.1", "ger.1", "ita.1", "fra.1"]
+
+            const relevantLeagues = data.data
+                                    .filter(league => relevantLeaguesIds.includes(league.id))
+                                    .sort((a, b) => relevantLeaguesIds.indexOf(a.id) - relevantLeaguesIds.indexOf(b.id))
             
-            setAllSeasonsAvailable(seasons)            
+            setAllLeagues(relevantLeagues)                      
         }
 
-        getAllSeasonsAvailable()        
+        getAllLeagues()
     }, [])
 
-    //console.log(firstClub)
-    //console.log(secondClub)
-
-
-    //const showClubCards = firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0
+    
     
     function handleChange(event) {
         let isLowerBtn = true
@@ -201,6 +245,10 @@ export default function Game() {
 
     return (
         <main className="game">
+            {
+                (inGameMode === 0) &&
+                <GameMenu />
+            }
             {
                 (inGameMode === 1) &&
                 <div className="game--gameOn">                    
