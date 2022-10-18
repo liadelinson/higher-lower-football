@@ -70,30 +70,47 @@ export default function Game() {
 
             let allStandingsPerLeagueObject = {}
 
+            let allUrls = []
+            let allUrlsLeagueIdIdx = []            
+
             for(const [leagueId, allSeasonsAvailable] of Object.entries(allSeasonsAvailablePerLeague))
             {
-                const urls = allSeasonsAvailable.map((season) =>
-                `https://api-football-standings.azharimm.dev/leagues/${leagueId}/standings?season=${season}&sort=asc`)
+                const leagueUrls = allSeasonsAvailable.map((season) =>
+                `https://api-football-standings.azharimm.dev/leagues/${leagueId}/standings?season=${season}&sort=asc`)                
+                
+                allUrls.push(...leagueUrls)
 
-                const requests = urls.map((url) => fetch(url))
-                const responses = await Promise.all(requests)
-                const errors = responses.filter((response) => !response.ok)                
-
-                if (errors.length > 0) {
-                    throw errors.map((response) => Error(response.statusText))
+                for(let i = 0; i < allSeasonsAvailable.length; i++)
+                {
+                    allUrlsLeagueIdIdx.push(leagueId)
                 }                
+            }
 
-                const json = responses.map((response) => response.json())
-                const data = await Promise.all(json)           
+            const requests = allUrls.map((url) => fetch(url))
+            const responses = await Promise.all(requests)
+            const errors = responses.filter((response) => !response.ok)                
 
-                const allStandingsObject = data.reduce((obj, item) => ({...obj, [item.data.season]: item.data}), {})
+            if (errors.length > 0) {
+                throw errors.map((response) => Error(response.statusText))
+            }           
 
-                allStandingsPerLeagueObject = {...allStandingsPerLeagueObject, [leagueId]: allStandingsObject}
-            }         
+            const json = responses.map((response) => response.json())
+            const data = await Promise.all(json)         
+
+            for(let leagueId of Object.keys(allSeasonsAvailablePerLeague))
+            {
+                allStandingsPerLeagueObject[leagueId] = {}
+            }            
+
+            for(let i = 0; i < data.length; i++)
+            {
+                allStandingsPerLeagueObject[allUrlsLeagueIdIdx[i]][data[i].data.season] = data[i].data
+            }           
+            
             setAllStandingsPerLeague(allStandingsPerLeagueObject)
         }
         catch(errors) {
-            errors.forEach((error) => console.error(error));
+            errors.forEach((error) => console.error(error))
         }            
     }, [allSeasonsAvailablePerLeague])
 
@@ -134,41 +151,39 @@ export default function Game() {
     React.useEffect(() => {
         async function getAllSeasonsAvailablePerLeague() {
 
-            let allSeasons = {}
+            let allSeasons = {}            
+
+            const allUrls = allLeagues.map((league) => `https://api-football-standings.azharimm.dev/leagues/${league.id}/seasons`)
+
+            const requests = allUrls.map((url) => fetch(url))
+            const responses = await Promise.all(requests)                      
+
+            const json = responses.map((response) => response.json())
+            const data = await Promise.all(json)           
+
+            let allLeaguesSeasons = data.map((leagueSeasons) => leagueSeasons.data.seasons.map(seasonItem => seasonItem.year))
             
-            for(const league of allLeagues)
+            const currentTime = new Date()
+            const year = currentTime.getFullYear()
+            const month = currentTime.getMonth() + 1
+
+            //filtering seasons array so all seasons should be complete 
+            allLeaguesSeasons = allLeaguesSeasons.map((leagueSeasons) => 
+                                                       leagueSeasons.filter(season => month <= 6 ? season < year - 1 : season < year))                                                  
+
+            for(let i = 0; i < allLeagues.length; i++)
             {
-                const res = await fetch(`https://api-football-standings.azharimm.dev/leagues/${league.id}/seasons`)
-                const data = await res.json()            
-
-                let seasons = data.data.seasons.map(seasonItem => seasonItem.year)
-
-                //filtering seasons array so all seasons should be complete
-
-                const currentTime = new Date()
-                const year = currentTime.getFullYear()
-                const month = currentTime.getMonth() + 1
-
-                if(month <= 6)
-                {
-                    //the most recent complete season is year-2/year-1
-                    seasons = seasons.filter(season => season < year - 1)
-                }
-                else
-                {
-                    //the most recent complete season is year-1/year
-                    seasons = seasons.filter(season => season < year)
-                }
+                let curLeagueId = allLeagues[i].id
+                allSeasons[curLeagueId] = allLeaguesSeasons[i]               
 
                 // fix for French league    
-                if(league.id === "fra.1")
+                if(curLeagueId === "fra.1")
                 {                    
                     const badSeasons = [2000, 2001]
-                    seasons = seasons.filter(season => !badSeasons.includes(season))
+                    allSeasons[curLeagueId] = allSeasons[curLeagueId].filter(season => !badSeasons.includes(season))
                 }
-
-                allSeasons = {...allSeasons, [league.id]: seasons}
-            }           
+            }            
+            
             setAllSeasonsAvailablePerLeague(allSeasons)            
         }
         getAllSeasonsAvailablePerLeague()
