@@ -16,12 +16,18 @@ export default function GameOver(props) {
             <h1 className="gameOver--title">Game Over</h1>                    
             <h2 className="gameOver--score">Score: {props.score}</h2>
             <div
-                className="gameOver--playAgain"
-                id="btnPlayAgain"
+                className="game--mainButton"                
                 onClick={props.handlePlayAgain}
             >
                 Play Again
             </div>
+            <div
+                className="game--mainButton"                
+                onClick={props.handleReturnToMenu}
+            >
+                Main Menu
+            </div>
+
             <h4 className="gameOver--clubDetails">
                 {gameOverClubDetails(props.firstClub)}
             </h4>

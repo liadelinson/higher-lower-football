@@ -54,6 +54,40 @@ html, body {
     position: relative;      
 }
 
+.game--mainButton {
+    background: linear-gradient(to right, #1dbb3a, #07fa14);
+    color: black;
+    border: 1px solid;
+    height: 4vh;    
+    cursor: pointer;
+    display: flex;    
+    justify-content: center;    
+    align-items: center;
+    width: 20%;
+    border-radius: 60px;     
+    margin: 3vmin;
+    font-weight: 700;
+    font-size: 3vmin;
+}
+
+.gameMenu {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;   
+    justify-content: center;
+}
+
+.gameMenu--title {
+    font-size: 9vmin;
+    font-weight: 700; 
+    color: black;
+    padding: 1vmin;
+    border-radius: 10%;     
+}
+
+
 .gameScores {
     display: flex;
     align-items: center;    
@@ -170,26 +204,10 @@ html, body {
     border-radius: 10%;      
 }
 
-.gameOver--playAgain {
-    background: linear-gradient(to right, #1dbb3a, #07fa14);
-    color: black;
-    border: 1px solid;
-    height: 4vh;    
-    cursor: pointer;
-    display: flex;    
-    justify-content: center;    
-    align-items: center;
-    width: 20%;
-    border-radius: 60px;     
-    margin: 3vmin;
-    font-weight: 700;
-    font-size: 3vmin;
-}
-
-.game--gameOver > h4 {
-    margin-bottom: 0.25vh;
-    font-size: 0.5vw;
-    font-weight: 400;
+.gameOver--clubDetails {
+    margin-bottom: 0;
+    font-size: 2.5vmin;
+    font-weight: 500;
 }
 
 

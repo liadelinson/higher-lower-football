@@ -9,6 +9,18 @@ export default function GameMenu(props) {
             <div className="gameMenu--leagueCards">
 
             </div>
+
+            {
+                (props.allStandingsPerLeague && Object.keys(props.allStandingsPerLeague).length > 0) &&
+                <div
+                    className="game--mainButton"                
+                    onClick={props.handleStartGame}
+                >
+                    START
+                </div>
+            }
+
+            
         </div>
     )
 }

@@ -63,6 +63,15 @@ export default function Game() {
 
     }, [allStandingsPerLeague, generateSeason, generateClubIndex])
 
+    const firstRandomClub = React.useCallback(() => {        
+        setFirstClub(getRandomClub(selectedLeague))
+    }, [selectedLeague, getRandomClub])
+
+    const secondRandomClub = React.useCallback(() => {
+        setSecondClub(getRandomClub(selectedLeague))
+    }, [selectedLeague, getRandomClub])
+
+
     
 
     const getAllStandings = React.useCallback(async () => {
@@ -112,33 +121,7 @@ export default function Game() {
         catch(errors) {
             errors.forEach((error) => console.error(error))
         }            
-    }, [allSeasonsAvailablePerLeague])
-
-
-    const firstRandomClub = React.useCallback(() => {        
-        setFirstClub(getRandomClub(selectedLeague))
-    }, [selectedLeague, getRandomClub])
-
-    const secondRandomClub = React.useCallback(() => {
-        setSecondClub(getRandomClub(selectedLeague))
-    }, [selectedLeague, getRandomClub])
-
-
-    React.useEffect(() => {
-        if(firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0) {
-            setInGameMode((prevInGameMode) => ((prevInGameMode !== 1) ? 1 : prevInGameMode))
-        }    
-
-    }, [firstClub, secondClub])
-
-
-    React.useEffect(() => {
-        if(allStandingsPerLeague && Object.keys(allStandingsPerLeague).length) {
-            firstRandomClub()
-            secondRandomClub()   
-        }
-
-    }, [allStandingsPerLeague, firstRandomClub, secondRandomClub])
+    }, [allSeasonsAvailablePerLeague])  
 
 
     React.useEffect(() => {
@@ -206,6 +189,44 @@ export default function Game() {
 
         getAllLeagues()
     }, [])
+    
+    /*
+
+    React.useEffect(() => {
+        if(allStandingsPerLeague && Object.keys(allStandingsPerLeague).length) {
+            firstRandomClub()
+            secondRandomClub()   
+        }
+
+    }, [allStandingsPerLeague, firstRandomClub, secondRandomClub])
+
+    */
+
+
+    /*
+    React.useEffect(() => {
+        if(firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0) {
+            setInGameMode((prevInGameMode) => ((prevInGameMode !== 1) ? 1 : prevInGameMode))
+        }    
+
+    }, [firstClub, secondClub])
+    */
+
+
+    function handleStartGame() {
+
+        /*
+        if(firstClub && secondClub && Object.keys(firstClub).length > 0 && Object.keys(secondClub).length > 0) {
+            setInGameMode(1)
+        }
+        */
+
+        firstRandomClub()
+        secondRandomClub()
+            
+
+        setInGameMode(1)        
+    }
 
     
     
@@ -250,10 +271,18 @@ export default function Game() {
     }
 
     function handlePlayAgain() {
-        setScore(0)        
+        setScore(0)   
 
         firstRandomClub()
-        secondRandomClub()       
+        secondRandomClub() 
+
+        setInGameMode(1)            
+    }
+
+    function handleReturnToMenu() {
+        setScore(0)
+
+        setInGameMode(0)
     }
 
     
@@ -262,18 +291,36 @@ export default function Game() {
         <main className="game">
             {
                 (inGameMode === 0) &&
-                <GameMenu />
+                <GameMenu
+                 allLeagues={allLeagues}
+                 allStandingsPerLeague={allStandingsPerLeague} 
+                 handleStartGame={handleStartGame}
+                />
             }
             {
                 (inGameMode === 1) &&
                 <div className="game--gameOn">                    
-                    <GameClubCards firstClub={firstClub} secondClub={secondClub} handleChange={handleChange}/>
-                    <GameScores highScore={highScore} score={score}/>                 
+                    <GameClubCards
+                     firstClub={firstClub}
+                     secondClub={secondClub}
+                     handleChange={handleChange}
+                    />
+
+                    <GameScores 
+                     highScore={highScore}
+                     score={score}
+                    />                 
                 </div>
             }
             {
                 (inGameMode === 2) &&                
-                <GameOver firstClub={firstClub} secondClub={secondClub} score={score} handlePlayAgain={handlePlayAgain} />               
+                <GameOver 
+                 firstClub={firstClub}
+                 secondClub={secondClub}
+                 score={score}
+                 handlePlayAgain={handlePlayAgain}
+                 handleReturnToMenu={handleReturnToMenu}
+                />               
             }
                        
         </main>
