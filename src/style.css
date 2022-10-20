@@ -79,6 +79,44 @@ html, body {
     justify-content: center;
 }
 
+.gameMenu--leagueCards {
+    display: flex;
+    flex-wrap: nowrap;
+    align-self: center;
+    gap: 4vw;
+    overflow-x: auto;
+    margin-bottom: 2vh;
+}
+
+.leagueCard {   
+    font-size: 3vmin;
+    width: 12vw;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;    
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    border-radius: 7px; 
+}
+
+.leagueCard--image {
+    width: 100%;
+    margin-bottom: 7px;   
+    margin-top: 4vh;
+    padding: 1vmin;   
+}
+
+.leagueCard--tick {
+    position: absolute;
+    top: 0.1vmin;
+    left: 0.1vmin;
+    width: 30%;
+}
+
 .gameMenu--title {
     font-size: 9vmin;
     font-weight: 700; 
@@ -86,7 +124,6 @@ html, body {
     padding: 1vmin;
     border-radius: 10%;     
 }
-
 
 .gameScores {
     display: flex;

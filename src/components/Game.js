@@ -182,7 +182,7 @@ export default function Game() {
 
             const relevantLeagues = data.data
                                     .filter(league => relevantLeaguesIds.includes(league.id))
-                                    .sort((a, b) => relevantLeaguesIds.indexOf(a.id) - relevantLeaguesIds.indexOf(b.id))
+                                    .sort((a, b) => relevantLeaguesIds.indexOf(a.id) - relevantLeaguesIds.indexOf(b.id))                          
             
             setAllLeagues(relevantLeagues)                      
         }
@@ -211,6 +211,25 @@ export default function Game() {
 
     }, [firstClub, secondClub])
     */
+
+    function selectALeague(event) {
+        let id = ""
+
+        if(event.target.className !== "leagueCard")
+        {
+            id = event.target.parentNode.id
+        }
+        else
+        {
+            id = event.target.id
+        }
+
+        if(allLeagues.some((league) => league.id === id))
+        {
+            setSelectedLeague(id)
+        } 
+
+    }
 
 
     function handleStartGame() {
@@ -293,7 +312,9 @@ export default function Game() {
                 (inGameMode === 0) &&
                 <GameMenu
                  allLeagues={allLeagues}
-                 allStandingsPerLeague={allStandingsPerLeague} 
+                 allStandingsPerLeague={allStandingsPerLeague}
+                 selectedLeague={selectedLeague}
+                 selectALeague = {selectALeague} 
                  handleStartGame={handleStartGame}
                 />
             }
