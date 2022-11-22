@@ -1,4 +1,5 @@
 import React from "react"
+import ImageNotAvailable from "../images/image-not-available.png"
 
 export default function ClubCard(props) {
 
@@ -20,11 +21,27 @@ export default function ClubCard(props) {
         }
     }
 
-    //console.log(props)
+    let imageSource 
+    try
+    {
+        imageSource = props.club.team.logos[0].href                 
+    }
+    catch (errors)
+    {
+        imageSource = ImageNotAvailable
+    }   
 
     return (
         <div className="card">
-            <img src={props.club.team.logos[0].href} alt="" className="card--image"/>
+            <img 
+                src={imageSource}
+                alt=""
+                className="card--image"
+                onError={event => {
+                    event.target.src = ImageNotAvailable
+                    event.onerror = null
+                }}/>
+                
 
             <div className="card--data">
                 <p className="card--name">{props.club.team.name}</p>

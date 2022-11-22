@@ -74,53 +74,60 @@ export default function Game() {
 
     
 
-    const getAllStandings = React.useCallback(async () => {
-        try {
+    const getAllStandings = React.useCallback(async () => {       
 
-            let allStandingsPerLeagueObject = {}
+        let allStandingsPerLeagueObject = {}
 
-            let allUrls = []
-            let allUrlsLeagueIdIdx = []            
-
-            for(const [leagueId, allSeasonsAvailable] of Object.entries(allSeasonsAvailablePerLeague))
-            {
-                const leagueUrls = allSeasonsAvailable.map((season) =>
-                `https://api-football-standings.azharimm.dev/leagues/${leagueId}/standings?season=${season}&sort=asc`)                
-                
-                allUrls.push(...leagueUrls)
-
-                for(let i = 0; i < allSeasonsAvailable.length; i++)
-                {
-                    allUrlsLeagueIdIdx.push(leagueId)
-                }                
-            }
-
-            const requests = allUrls.map((url) => fetch(url))
-            const responses = await Promise.all(requests)
-            const errors = responses.filter((response) => !response.ok)                
-
-            if (errors.length > 0) {
-                throw errors.map((response) => Error(response.statusText))
-            }           
-
-            const json = responses.map((response) => response.json())
-            const data = await Promise.all(json)         
-
-            for(let leagueId of Object.keys(allSeasonsAvailablePerLeague))
-            {
-                allStandingsPerLeagueObject[leagueId] = {}
-            }            
-
-            for(let i = 0; i < data.length; i++)
-            {
-                allStandingsPerLeagueObject[allUrlsLeagueIdIdx[i]][data[i].data.season] = data[i].data
-            }           
-            
-            setAllStandingsPerLeague(allStandingsPerLeagueObject)
+        let allUrls = []        
+        
+        let leagueNameToLeagueId = {
+            "English Premier League": "eng.1",
+            "Spanish LaLiga": "esp.1",
+            "German Bundesliga": "ger.1",
+            "Italian Serie A": "ita.1",
+            "French Ligue 1": "fra.1"
         }
-        catch(errors) {
-            errors.forEach((error) => console.error(error))
+
+        for(const [leagueId, allSeasonsAvailable] of Object.entries(allSeasonsAvailablePerLeague))
+        {
+            const leagueUrls = allSeasonsAvailable.map((season) =>
+            `https://api-football-standings.azharimm.dev/leagues/${leagueId}/standings?season=${season}&sort=asc`)                
+            
+            allUrls.push(...leagueUrls)                            
+        }
+
+        // allUrls.push(`https://api-football-standings.azharimm.dev/leagues/eng.1/standings?season=1990&sort=asc`)
+
+        const requests = allUrls.map((url) => fetch(url))
+        const responses = await Promise.all(requests)
+        
+        const errors = responses.filter((response) => !response.ok)
+        errors.forEach((error) => console.error(error.statusText))
+                 
+
+        const json = responses.map((response) => response.json())
+        const data = await Promise.all(json)
+        
+        console.log(data)
+
+        for(let leagueId of Object.keys(allSeasonsAvailablePerLeague))
+        {
+            allStandingsPerLeagueObject[leagueId] = {}
         }            
+
+        for(let i = 0; i < data.length; i++)
+        {
+            if(data[i].status)
+            {
+                let leagueId = leagueNameToLeagueId[data[i].data.name]
+                allStandingsPerLeagueObject[leagueId][data[i].data.season] = data[i].data            
+            }                
+        }
+        
+        console.log(allStandingsPerLeagueObject)
+        
+        setAllStandingsPerLeague(allStandingsPerLeagueObject)       
+                  
     }, [allSeasonsAvailablePerLeague])  
 
 
