@@ -1,17 +1,18 @@
 {
   "files": {
     "main.css": "/higher-lower-football/static/css/main.a746e45f.css",
-    "main.js": "/higher-lower-football/static/js/main.5aa73bed.js",
+    "main.js": "/higher-lower-football/static/js/main.138f04e8.js",
     "static/js/787.c2d6d4bf.chunk.js": "/higher-lower-football/static/js/787.c2d6d4bf.chunk.js",
     "static/media/phil-jones.jpg": "/higher-lower-football/static/media/phil-jones.bc57c68bf04ea0b16626.jpg",
+    "static/media/image-not-available.png": "/higher-lower-football/static/media/image-not-available.82e8571d63cd128b090e.png",
     "static/media/green-tick.png": "/higher-lower-football/static/media/green-tick.aeb93435497bd6760f41.png",
     "index.html": "/higher-lower-football/index.html",
     "main.a746e45f.css.map": "/higher-lower-football/static/css/main.a746e45f.css.map",
-    "main.5aa73bed.js.map": "/higher-lower-football/static/js/main.5aa73bed.js.map",
+    "main.138f04e8.js.map": "/higher-lower-football/static/js/main.138f04e8.js.map",
     "787.c2d6d4bf.chunk.js.map": "/higher-lower-football/static/js/787.c2d6d4bf.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a746e45f.css",
-    "static/js/main.5aa73bed.js"
+    "static/js/main.138f04e8.js"
   ]
 }
