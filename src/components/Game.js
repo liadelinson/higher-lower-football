@@ -94,21 +94,16 @@ export default function Game() {
             `https://api-football-standings.azharimm.dev/leagues/${leagueId}/standings?season=${season}&sort=asc`)                
             
             allUrls.push(...leagueUrls)                            
-        }
-
-        // allUrls.push(`https://api-football-standings.azharimm.dev/leagues/eng.1/standings?season=1990&sort=asc`)
+        }       
 
         const requests = allUrls.map((url) => fetch(url))
         const responses = await Promise.all(requests)
         
         const errors = responses.filter((response) => !response.ok)
-        errors.forEach((error) => console.error(error.statusText))
-                 
+        errors.forEach((error) => console.error(error.statusText))                 
 
         const json = responses.map((response) => response.json())
-        const data = await Promise.all(json)
-        
-        console.log(data)
+        const data = await Promise.all(json)        
 
         for(let leagueId of Object.keys(allSeasonsAvailablePerLeague))
         {
@@ -122,9 +117,7 @@ export default function Game() {
                 let leagueId = leagueNameToLeagueId[data[i].data.name]
                 allStandingsPerLeagueObject[leagueId][data[i].data.season] = data[i].data            
             }                
-        }
-        
-        console.log(allStandingsPerLeagueObject)
+        }       
         
         setAllStandingsPerLeague(allStandingsPerLeagueObject)       
                   
