@@ -6,6 +6,4 @@ It's the same as the original Higher or Lower game, but it's based on Clubs' tab
 Higher - better position, Lower - worse position.
 
 
-### Link: https://liadelinson.github.io/higher-lower-football/
-
 #### Data is taken from https://api-football-standings.azharimm.dev/
